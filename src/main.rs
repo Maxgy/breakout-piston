@@ -12,9 +12,9 @@ fn main() {
     let mut window_height = window.size().height;
     let mut cursor = [0.0, 0.0];
 
-    let mut ball = Ball::new(50.0, 50.0, 11.0);
+    let mut ball = Ball::new(window_width / 2.0, window_height - 100.0, 11.0);
     let mut paddle = Paddle::new(window_width / 2.0, window_height - 50.0, 100.0, 20.0);
-    let bricks = Brick::make_bricks(window_width);
+    let mut bricks = Brick::make_bricks(window_width);
 
     while let Some(event) = window.next() {
         window_width = window.size().width;
@@ -29,7 +29,9 @@ fn main() {
 
             ball.draw(&context, graphics);
             ball.update();
-            ball.bounce(window_width, window_height);
+            ball.edge_bounce(window_width, window_height);
+            ball.hit_paddle(&paddle);
+            ball.break_bricks(&mut bricks);
 
             paddle.draw(&context, graphics);
             paddle.update(cursor[0]);

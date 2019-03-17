@@ -1,5 +1,10 @@
+use std::process;
+
 use graphics::{Context, Graphics};
 use piston_window::ellipse;
+
+use crate::brick::Brick;
+use crate::paddle::Paddle;
 
 pub struct Ball {
     x: f64,
@@ -16,7 +21,7 @@ impl Ball {
             y,
             r,
             dx: 4.0,
-            dy: 4.0,
+            dy: -4.0,
         }
     }
 
@@ -34,12 +39,48 @@ impl Ball {
         self.y += self.dy;
     }
 
-    pub fn bounce(&mut self, window_width: f64, window_height: f64) {
+    pub fn edge_bounce(&mut self, window_width: f64, window_height: f64) {
         if self.x > window_width - self.r || self.x < self.r {
             self.dx = -self.dx;
         }
-        if self.y > window_height - self.r || self.y < self.r {
+        if self.y < self.r {
             self.dy = -self.dy;
+        } else if self.y > window_height - self.r {
+            process::exit(1);
+        }
+    }
+
+    pub fn hit_paddle(&mut self, paddle: &Paddle) {
+        if self.y > paddle.y - self.r && (self.x > paddle.x && self.x < paddle.x + paddle.w) {
+            self.y -= 1.0;
+            if self.x < paddle.x + paddle.w / 2.0 {
+                self.dx = -(self.dx.abs());
+                self.dy = -self.dy;
+            } else {
+                self.dx = self.dx.abs();
+                self.dy = -self.dy;
+            }
+        }
+    }
+
+    pub fn break_bricks(&mut self, bricks: &mut [Brick]) {
+        for b in bricks.iter() {
+            if self.x > b.x
+                && self.x < b.x + b.w
+                && (self.y < b.y + b.h + self.r && self.y > b.y + b.h / 2.0
+                    || self.y > b.y - self.r && self.y < b.y + b.h / 2.0)
+            {
+                self.dy = -self.dy;
+                break;
+            }
+            if self.y > b.y
+                && self.y < b.y + b.h
+                && (self.x < b.x + b.w + self.r && self.x > b.x + b.w / 2.0
+                    || self.x > b.x - self.r && self.x < b.x + b.w / 2.0)
+            {
+                self.dx = -self.dx;
+                break;
+            }
         }
     }
 }

@@ -7,10 +7,10 @@ use piston_window::rectangle;
 
 pub struct Brick {
     color: [f32; 4],
-    x: f64,
-    y: f64,
-    w: f64,
-    h: f64,
+    pub x: f64,
+    pub y: f64,
+    pub w: f64,
+    pub h: f64,
 }
 
 impl Brick {
