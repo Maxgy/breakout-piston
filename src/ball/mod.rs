@@ -1,5 +1,3 @@
-use std::process;
-
 use graphics::{Context, Graphics};
 use piston_window::ellipse;
 
@@ -39,14 +37,15 @@ impl Ball {
         self.y += self.dy;
     }
 
-    pub fn edge_bounce(&mut self, window_width: f64, window_height: f64) {
+    pub fn edge_bounce(&mut self, window_width: f64, window_height: f64) -> bool {
         if self.x > window_width - self.r || self.x < self.r {
             self.dx = -self.dx;
-        }
-        if self.y < self.r {
+            false
+        } else if self.y < self.r {
             self.dy = -self.dy;
-        } else if self.y > window_height - self.r {
-            process::exit(1);
+            false
+        } else {
+            self.y > window_height - self.r
         }
     }
 
@@ -63,14 +62,15 @@ impl Ball {
         }
     }
 
-    pub fn break_bricks(&mut self, bricks: &mut [Brick]) {
-        for b in bricks.iter() {
+    pub fn break_bricks(&mut self, bricks: &mut Vec<Brick>) {
+        for (i, b) in bricks.iter().enumerate() {
             if self.x > b.x
                 && self.x < b.x + b.w
                 && (self.y < b.y + b.h + self.r && self.y > b.y + b.h / 2.0
                     || self.y > b.y - self.r && self.y < b.y + b.h / 2.0)
             {
                 self.dy = -self.dy;
+                bricks.remove(i);
                 break;
             }
             if self.y > b.y
@@ -79,6 +79,7 @@ impl Ball {
                     || self.x > b.x - self.r && self.x < b.x + b.w / 2.0)
             {
                 self.dx = -self.dx;
+                bricks.remove(i);
                 break;
             }
         }

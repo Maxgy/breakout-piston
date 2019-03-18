@@ -34,7 +34,7 @@ impl Brick {
             let actual_y = y as i32 * 30 + 100;
 
             while x < window_width - 100.0 {
-                let w = rng.gen_range(25.0, 85.0);
+                let w = rng.gen_range(35.0, 85.0);
                 bricks.push(Brick::new(*c, x, f64::from(actual_y), w, 25.0));
                 x += w + 5.0;
             }

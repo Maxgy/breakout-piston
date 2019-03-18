@@ -1,5 +1,7 @@
 extern crate piston_window;
 
+use std::process;
+
 use piston_window::*;
 
 use breakout_piston::ball::Ball;
@@ -13,7 +15,7 @@ fn main() {
     let mut cursor = [0.0, 0.0];
 
     let mut ball = Ball::new(window_width / 2.0, window_height - 100.0, 11.0);
-    let mut paddle = Paddle::new(window_width / 2.0, window_height - 50.0, 100.0, 20.0);
+    let mut paddle = Paddle::new(window_width / 2.0, window_height - 50.0, 125.0, 20.0);
     let mut bricks = Brick::make_bricks(window_width);
 
     while let Some(event) = window.next() {
@@ -29,7 +31,9 @@ fn main() {
 
             ball.draw(&context, graphics);
             ball.update();
-            ball.edge_bounce(window_width, window_height);
+            if ball.edge_bounce(window_width, window_height) {
+                process::exit(0);
+            }
             ball.hit_paddle(&paddle);
             ball.break_bricks(&mut bricks);
 
