@@ -1,3 +1,5 @@
+use rand::{thread_rng, Rng};
+
 use graphics::{Context, Graphics};
 use piston_window::ellipse;
 
@@ -32,17 +34,47 @@ impl Ball {
         )
     }
 
+    pub fn change_dx(&mut self) {
+        let mut rng = thread_rng();
+        let rand = rng.gen_range(0.0, 2.0);
+
+        self.dx = -self.dx;
+        if self.dx < 0.0 {
+            self.dx = -4.0 - rand;
+        } else {
+            self.dx = 4.0 + rand;
+        }
+    }
+
+    pub fn change_dy(&mut self) {
+        let mut rng = thread_rng();
+        let rand = rng.gen_range(0.0, 2.0);
+
+        self.dy = -self.dy;
+        if self.dy < 0.0 {
+            self.dy = -3.0 - rand;
+        } else {
+            self.dy = 3.0 + rand;
+        }
+    }
+
     pub fn update(&mut self) {
         self.x += self.dx;
         self.y += self.dy;
     }
 
     pub fn edge_bounce(&mut self, window_width: f64, window_height: f64) -> bool {
-        if self.x > window_width - self.r || self.x < self.r {
-            self.dx = -self.dx;
+        if self.x > window_width - self.r {
+            self.x = window_width - self.r - 1.0;
+            self.change_dx();
+            false
+        } else if self.x < self.r {
+            self.x = self.r + 1.0;
+            self.change_dx();
             false
         } else if self.y < self.r {
-            self.dy = -self.dy;
+            self.y = self.r + 1.0;
+            self.change_dy();
             false
         } else {
             self.y > window_height - self.r
@@ -54,10 +86,10 @@ impl Ball {
             self.y -= 1.0;
             if self.x < paddle.x + paddle.w / 2.0 {
                 self.dx = -(self.dx.abs());
-                self.dy = -self.dy;
+                self.change_dy();
             } else {
                 self.dx = self.dx.abs();
-                self.dy = -self.dy;
+                self.change_dy();
             }
         }
     }
@@ -69,7 +101,7 @@ impl Ball {
                 && (self.y < b.y + b.h + self.r && self.y > b.y + b.h / 2.0
                     || self.y > b.y - self.r && self.y < b.y + b.h / 2.0)
             {
-                self.dy = -self.dy;
+                self.change_dy();
                 bricks.remove(i);
                 break;
             }
@@ -78,7 +110,7 @@ impl Ball {
                 && (self.x < b.x + b.w + self.r && self.x > b.x + b.w / 2.0
                     || self.x > b.x - self.r && self.x < b.x + b.w / 2.0)
             {
-                self.dx = -self.dx;
+                self.change_dx();
                 bricks.remove(i);
                 break;
             }

@@ -1,5 +1,3 @@
-extern crate rand;
-
 use rand::{thread_rng, Rng};
 
 use graphics::{Context, Graphics};
@@ -31,11 +29,11 @@ impl Brick {
         ];
         for (y, c) in colors.iter().enumerate() {
             let mut x = 4.0;
-            let actual_y = y as i32 * 30 + 100;
+            let actual_y = y as i32 * 35 + 100;
 
             while x < window_width - 100.0 {
                 let w = rng.gen_range(35.0, 85.0);
-                bricks.push(Brick::new(*c, x, f64::from(actual_y), w, 25.0));
+                bricks.push(Brick::new(*c, x, f64::from(actual_y), w, 30.0));
                 x += w + 5.0;
             }
             bricks.push(Brick::new(
@@ -43,7 +41,7 @@ impl Brick {
                 x,
                 f64::from(actual_y),
                 window_width - x - 5.0,
-                25.0,
+                30.0,
             ));
         }
         bricks
